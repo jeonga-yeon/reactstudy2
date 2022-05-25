@@ -1,53 +1,61 @@
-# Dynamic Routing
+# Query String Assignment
 
-동적 라우팅을 직접 구현해보는 과제입니다.
+쿼리 스트링을 이용해 페이지네이션을 구현하는 과제입니다.
 
 ## 1. 프로젝트 구조
 
-1-1. src/Router.js
+### 1-0. /server/
 
-프로젝트의 Routing을 관리하는 컴포넌트 입니다. 현재 프로젝트에는 두개의 Route가 구현되어 있습니다.
+프로젝트에서 사용할 백엔드 API가 구현되어 있는 디렉토리입니다.(이 코드는 수정하시면 안됩니다)
 
-1. `"/"` : Monsters 컴포넌트가 렌더링 됩니다.
-2. `"/detail/"` : Monster 컴포넌트가 렌더링됩니다.(동적 라우팅이 아직 구현되어 있지 않습니다.)
+### 1-1. src/Router.js
 
-### 1-2. src/pages/Monsters
+프로젝트의 Routing을 관리하는 컴포넌트 입니다.
 
-Monsters 컴포넌트가 위치하고 있습니다. 이 컴포넌트에서는 monster의 리스트를 응답하는 API를 호출하고,
-응답값을 이용해서 몬스터들의 리스트를 렌더링 합니다.
+1. `"/"` : Users 컴포넌트가 렌더링 됩니다.
 
-### 1-3. src/pages/Monster
+### 1-2. src/pages/Users
 
-Monster 컴포넌트가 위치하고 있습니다. 이 컴포넌트의 목적은 하나의 monster에 대한 정보를 응답하는 API를 호출하고,
-응답값을 이용해서 몬스터의 정보를 보여주는 것입니다(아직 구현되어 있지 않습니다.)
+Users 컴포넌트가 위치하고 있습니다. 이 컴포넌트에서는 유저들의 목록을 받아오는 API를 호출하고
+응답값을 이용해서 유저의 리스트를 렌더링 합니다.
 
 ## 2. 구현 목표
 
-1. Monsters 컴포넌트에서 몬스터를 클릭했을 때 `/detail/[몬스터의 ID]`로 이동할 수 있게 해주세요  
-   e.g., id가 1인 몬스터를 클릭하면 `/detail/1`로 이동, id가 2인 몬스터를 클릭하면 `/detail/2`로 이동
+Users 컴포넌트는 지금 총 100개의 유저 데이터를 한번에 보여주고 있습니다. 이 데이터를 20개씩 끊어서 페이지별로 나눠서 보여주는 기능을 구현해야 합니다.
 
-2. Monster 컴포넌트에서 URL에 있는 몬스터의 ID에 해당하는 몬스터의 정보가 나오도록 해주세요  
-   e.g., `/detail/1`에서는 ID가 1인 몬스터에 대한 정보 표시, `/detail/2`에서는 ID가 2인 몬스터에 대한 정보 표시
+1. Users 컴포넌트에는 1 ~ 5까지 나타내는 버튼이 있습니다. 이 버튼을 누를 때 마다 쿼리 스트링이 변경되도록 해주세요
 
-3. Monster 컴포넌트에서 Back to Monster List 버튼을 누르면 `"/"` 경로로 돌아가도록 해주세요
+   - 1번 버튼 클릭 시: `offset=0&limit=20`
+   - 2번 버튼 클릭 시: `offset=20&limit=20`
+   - 3번 버튼 클릭 시: `offset=40&limit=20`
+   - 4번 버튼 클릭 시: `offset=60&limit=20`
+   - 5번 버튼 클릭 시: `offset=80&limit=20`
 
-4. Monster 컴포넌트에서 Previous, Next 버튼을 누르면 각각 이전 몬스터, 다음 몬스터에 대한 정보가 보이도록 해주세요
+2. Users 컴포넌트에서 쿼리 스트링을 변경될 때 마다 백엔드 API에 유저의 정보를 요청하고, 페이지별로 20개씩 끊어서 유저의 정보를 보여주세요
+
+   - 1번 버튼 클릭 시: 1 ~ 20번째 유저 정보
+   - 2번 버튼 클릭 시: 21 ~ 40번째 유저 정보
+   - 3번 버튼 클릭 시: 41 ~ 60번째 유저 정보
+   - 4번 버튼 클릭 시: 61 ~ 80번째 유저 정보
+   - 5번 버튼 클릭 시: 81 ~ 100번째 유저 정보
 
 ## 3. API 명세서
 
 백엔드 API 명세서는 아래와 같습니다.
 
-- BASEURL: `https://jsonplaceholder.typicode.com`
+- BASEURL: `https://localhost:8000`
 - End Point:
-  1. `/users` : 전체 몬스터에 대한 데이터
-  2. `/users/[몬스터의 ID]` : ID에 해당하는 몬스터에 대한 데이터
+  1. `/users` : 유저 리스트를 응답
+     - 사용 가능한 쿼리 스트링
+       - `start`: 응답하는 유저 데이터의 시작 index (0부터 시작)
+       - `limit`: 요청할 유저 데이터의 개수
+       - e.g., `/users?start=0&limit=20`: 1 ~ 20번째의 유저 데이터를 응답
 
 ## 4. 힌트
 
-- 컴포넌트에서 path parameter를 활용하기 위해서는 Router에서 Route의 path를 설정해줘야 합니다.
-- Previous, Next 버튼을 구현하기 위해서는 path parameter가 변할 때 마다 새롭게 API 호출을 하고 state를 변경해줘야 합니다.
-  (useEffect hook을 활용해보세요)
+- 쿼리 스트링을 읽고 변경하기 위해서는 `useSearchParams hook`을 이용해보세요
+- 2번 목표를 구현하기 위해서는 `useEffect hook`의 의존성 배열을 이용해보세요
 
 ## 5. 구현데모
 
-https://user-images.githubusercontent.com/54208214/170172717-68895f44-a2b6-457a-9ce4-259ae071d997.mov
+https://user-images.githubusercontent.com/54208214/170213288-bc4823a6-24f4-4870-a4e9-c35cbcf6a984.mov

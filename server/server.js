@@ -8,14 +8,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/users", (req, res) => {
-  const limit = Number(req.query.limit) || USERS.length;
-  const offset = Number(req.query.offset) || 0;
+  const limit = parseInt(req.query.limit) || USERS.length;
+  const start = parseInt(req.query.start) || 0;
 
-  const result = USERS.slice(offset, offset + limit);
+  const slicedUser = USERS.slice(start, start + limit);
 
   res.send({
     totalCount: USERS.length,
-    users: result,
+    users: slicedUser,
   });
 });
 

@@ -14,7 +14,7 @@ function Users() {
 
   return (
     <div className="users">
-      <h1>Assignment - Dynamic Routing</h1>
+      <h1>Assignment - Query String</h1>
       <div className="pageBtn">
         <button>1</button>
         <button>2</button>
